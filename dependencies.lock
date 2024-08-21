@@ -1,0 +1,55 @@
+dependencies:
+  espressif/ds18b20:
+    component_hash: d676429d9f1f686b65ed895e418eb4b331477bcd5d63c27f43dc3d6a2de8f13b
+    dependencies:
+    - name: espressif/onewire_bus
+      registry_url: https://components.espressif.com/
+      require: private
+      version: ^1.0.0
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 0.1.1
+  espressif/esp-zboss-lib:
+    component_hash: b0525e1008b69b5725348a0c62d89a32a51d9b6f7799134b52dc6018e1b48b40
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.4.1
+  espressif/esp-zigbee-lib:
+    component_hash: c585c6912fb0486593e04348ce7843a7e3e75f59752ea39eb63d5494a3c8519a
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.4.1
+  espressif/onewire_bus:
+    component_hash: c4c781940d8bd988432b47ac3ee68479c69e14e01fdfba0b61365b233a3ba5d6
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.0.2
+  idf:
+    source:
+      type: idf
+    version: 5.3.0
+direct_dependencies:
+- espressif/ds18b20
+- espressif/esp-zboss-lib
+- espressif/esp-zigbee-lib
+- espressif/onewire_bus
+- idf
+manifest_hash: 6463fc8f0ebdf8e6658c12147edf62a44a2e9833aa1b4907e48d4f538606f77a
+target: esp32c6
+version: 2.0.0
