@@ -109,18 +109,16 @@ void esp_app_heart_beat_handler()
         );
     bool cur_val = *(bool*)heart_beat->data_p; 
     
-    //ESP_LOGI(TAG, "Heart Beat: %s", cur_val ? "On" : "Off");
+    ESP_LOGI(TAG, "Heart Beat: %s", cur_val ? "On" : "Off");
 
-    //ESP_LOGI(TAG, "Current Heart Beat Value: %i", cur_val);
-    //cur_val = cur_val ^ 1;
+    cur_val = cur_val ^ 1;
 
-    bool new_val = 0x01;
     
     esp_zb_lock_acquire(portMAX_DELAY);
     esp_zb_zcl_set_attribute_val(HA_ESP_HB_ENDPOINT,
                                  ESP_ZB_ZCL_CLUSTER_ID_BINARY_INPUT,
                                   ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
-                                 ESP_ZB_ZCL_ATTR_BINARY_INPUT_PRESENT_VALUE_ID, &new_val, false);
+                                 ESP_ZB_ZCL_ATTR_BINARY_INPUT_PRESENT_VALUE_ID, &cur_val, false);
     esp_zb_lock_release();
 }
 
