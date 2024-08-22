@@ -3,6 +3,7 @@
 #include "esp_log.h"
 
 #define ONEWIRE_BUS_GPIO 7
+#define DSB1820_BAD_TEMP -127
 
 static const char *TTAG = "ESP_ZB_DS18B20_SENSOR";
 

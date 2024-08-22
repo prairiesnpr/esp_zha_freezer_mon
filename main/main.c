@@ -113,17 +113,43 @@ void esp_app_heart_beat_handler()
     esp_zb_lock_release();
 }
 
+void read_temps(float *temp_results)
+{
+    float temperature;
+    vTaskDelay(pdMS_TO_TICKS(200));
+    for (uint8_t i = 0; i < ds18b20_device_num; i++)
+    {
+        ESP_LOGI(TAG, "Setting Temp Conv");
+        esp_err_t err = ds18b20_trigger_temperature_conversion(ds18b20s[i]);
+        if (err == ESP_OK)
+        {
+            err = ds18b20_get_temperature(ds18b20s[i], &temperature);
+            if (err == ESP_OK)
+            {
+                temp_results[i] = temperature;
+            }
+            else
+            {
+                temp_results[i] = DSB1820_BAD_TEMP;
+            }
+        }
+        else
+        {
+            temp_results[i] = DSB1820_BAD_TEMP;
+        }
+    }
+}
 static void temp_timer_callback(void *arg)
 {
     int64_t time_since_boot = esp_timer_get_time();
     ESP_LOGI(TAG, "Temperature timer called, time since boot: %lld us", time_since_boot);
-    float temperature;
-    vTaskDelay(pdMS_TO_TICKS(200));
+    float temp_results[HA_ESP_NUM_T_SENSORS] = {DSB1820_BAD_TEMP, DSB1820_BAD_TEMP, DSB1820_BAD_TEMP, DSB1820_BAD_TEMP};
+    read_temps(temp_results);
 
     for (int i = 0; i < HA_ESP_NUM_T_SENSORS; i++)
     {
         uint8_t dsb_index = ep_to_ds[i];
-        ESP_LOGI(TAG, "EP: %d, dsb_index: %d",  i, dsb_index);
+        ESP_LOGI(TAG, "EP: %d, dsb_index: %d", i, dsb_index);
 
         if (dsb_index == 0xff)
         {
@@ -131,12 +157,12 @@ static void temp_timer_callback(void *arg)
         }
         else
         {
-            ESP_ERROR_CHECK(ds18b20_trigger_temperature_conversion(ds18b20s[dsb_index]));
-
-            ESP_ERROR_CHECK(ds18b20_get_temperature(ds18b20s[dsb_index], &temperature));
-            ESP_LOGI(TAG, "temperature read from DS18B20[%d], for EP: %d,  %.2fC", dsb_index, i, temperature);
-            esp_app_temp_sensor_handler(temperature, (HA_ESP_TEMP_START_ENDPOINT + i));
-            report_temp_attr(HA_ESP_TEMP_START_ENDPOINT + i);
+            ESP_LOGI(TAG, "temperature read from DS18B20[%d], for EP: %d,  %.2fC", dsb_index, i, temp_results[dsb_index]);
+            if (temp_results[dsb_index] != DSB1820_BAD_TEMP)
+            {
+                esp_app_temp_sensor_handler(temp_results[dsb_index], (HA_ESP_TEMP_START_ENDPOINT + i));
+                report_temp_attr(HA_ESP_TEMP_START_ENDPOINT + i);
+            }
         }
     }
 }
