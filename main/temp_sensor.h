@@ -3,9 +3,16 @@
 #include "esp_log.h"
 
 #define ONEWIRE_BUS_GPIO 7
-#define ONEWIRE_MAX_DS18B20 4
 
 static const char *TTAG = "ESP_ZB_DS18B20_SENSOR";
+
+typedef struct ds18b20_device_t {
+    onewire_bus_handle_t bus;
+    onewire_device_address_t addr;
+    uint8_t th_user1;
+    uint8_t tl_user2;
+    ds18b20_resolution_t resolution;
+} ds18b20_device_t;
 
 void find_onewire(ds18b20_device_handle_t *ds18b20s, uint8_t *ds18b20_device_num)
 {
@@ -26,7 +33,7 @@ void find_onewire(ds18b20_device_handle_t *ds18b20s, uint8_t *ds18b20_device_num
 
     // create 1-wire device iterator, which is used for device search
     ESP_ERROR_CHECK(onewire_new_device_iter(bus, &iter));
-    ESP_LOGW(TTAG, "Device iterator created, start searching...");
+    ESP_LOGI(TTAG, "Device iterator created, start searching...");
     do
     {
         search_result = onewire_device_iter_get_next(iter, &next_onewire_device);
@@ -36,22 +43,16 @@ void find_onewire(ds18b20_device_handle_t *ds18b20s, uint8_t *ds18b20_device_num
             // check if the device is a DS18B20, if so, return the ds18b20 handle
             if (ds18b20_new_device(&next_onewire_device, &ds_cfg, &ds18b20s[*ds18b20_device_num]) == ESP_OK)
             {
-                ESP_LOGW(TTAG, "Found a DS18B20[%d], address: %016llX", *ds18b20_device_num, next_onewire_device.address);
+                ESP_LOGI(TTAG, "Found a DS18B20[%d], address: %016llX", *ds18b20_device_num, next_onewire_device.address);
                 *ds18b20_device_num+=1;
             }
             else
             {
-                ESP_LOGW(TTAG, "Found an unknown device, address: %016llX", next_onewire_device.address);
+                ESP_LOGI(TTAG, "Found an unknown device, address: %016llX", next_onewire_device.address);
             }
         }
     } while (search_result != ESP_ERR_NOT_FOUND);
     ESP_ERROR_CHECK(onewire_del_device_iter(iter));
-    ESP_LOGW(TTAG, "Searching done, %d DS18B20 device(s) found", *ds18b20_device_num);
+    ESP_LOGI(TTAG, "Searching done, %d DS18B20 device(s) found", *ds18b20_device_num);
 }
 
-
-
-/*
-void find_onewire(ds18b20_device_handle_t *ds18b20s, uint8_t *ds18b20_device_num){ 
-}
-*/

@@ -6,6 +6,7 @@
 #define ED_KEEP_ALIVE                   3000    /* 3000 millisecond */
 #define HA_ESP_TEMP_START_ENDPOINT      3     /* esp temperature sensor device endpoint, used for temperature measurement */
 #define HA_ESP_HB_ENDPOINT              1
+#define HA_ESP_NUM_T_SENSORS            4
 
 #define ESP_ZB_PRIMARY_CHANNEL_MASK     ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK    /* Zigbee primary channel mask use in the example */
 
