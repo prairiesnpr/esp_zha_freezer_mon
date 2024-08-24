@@ -14,11 +14,9 @@
 #include "temp_sensor.h"
 #include "nvs_functions.h"
 
-#if !defined ZB_ED_ROLE
-#error Define ZB_ED_ROLE in idf.py menuconfig to compile sensor (End Device) source code.
-#endif
 
 static const char *TAG = "ESP_ZB_TEMP_SENSOR";
+uint8_t read_failures = 0;
 
 uint8_t ds18b20_device_num = 0;
 ds18b20_device_handle_t ds18b20s[HA_ESP_NUM_T_SENSORS];
@@ -131,12 +129,19 @@ void read_temps(float *temp_results)
             else
             {
                 temp_results[i] = DSB1820_BAD_TEMP;
+                read_failures++;
             }
         }
         else
         {
             temp_results[i] = DSB1820_BAD_TEMP;
+            read_failures++;
         }
+    }
+    if (read_failures > (4 * HA_ESP_NUM_T_SENSORS))
+    {
+        // Had to be a way to reset the bus, but I haven't found it.
+        onewire_bus_reset(ds18b20s[0]->bus);
     }
 }
 static void temp_timer_callback(void *arg)

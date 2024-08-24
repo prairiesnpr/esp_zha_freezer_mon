@@ -7,7 +7,8 @@
 
 static const char *TTAG = "ESP_ZB_DS18B20_SENSOR";
 
-typedef struct ds18b20_device_t {
+typedef struct ds18b20_device_t
+{
     onewire_bus_handle_t bus;
     onewire_device_address_t addr;
     uint8_t th_user1;
@@ -17,7 +18,9 @@ typedef struct ds18b20_device_t {
 
 void find_onewire(ds18b20_device_handle_t *ds18b20s, uint8_t *ds18b20_device_num)
 {
+
     onewire_bus_handle_t bus = NULL;
+
     onewire_bus_config_t bus_config = {
         .bus_gpio_num = ONEWIRE_BUS_GPIO,
     };
@@ -45,7 +48,7 @@ void find_onewire(ds18b20_device_handle_t *ds18b20s, uint8_t *ds18b20_device_num
             if (ds18b20_new_device(&next_onewire_device, &ds_cfg, &ds18b20s[*ds18b20_device_num]) == ESP_OK)
             {
                 ESP_LOGI(TTAG, "Found a DS18B20[%d], address: %016llX", *ds18b20_device_num, next_onewire_device.address);
-                *ds18b20_device_num+=1;
+                *ds18b20_device_num += 1;
             }
             else
             {
@@ -56,4 +59,3 @@ void find_onewire(ds18b20_device_handle_t *ds18b20s, uint8_t *ds18b20_device_num
     ESP_ERROR_CHECK(onewire_del_device_iter(iter));
     ESP_LOGI(TTAG, "Searching done, %d DS18B20 device(s) found", *ds18b20_device_num);
 }
-
