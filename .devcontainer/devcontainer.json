@@ -14,7 +14,9 @@
 				"idf.gitPath": "/usr/bin/git"
 			},
 			"extensions": [
-				"espressif.esp-idf-extension"
+				"espressif.esp-idf-extension",
+				"twxs.cmake",
+				"ms-vscode.cmake-tools"
 			]
 		},
 		"codespaces": {
